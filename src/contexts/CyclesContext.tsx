@@ -40,14 +40,12 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
 
     setCycles((state) => [...state, newCycle])
     setActiveCycle(newCycle)
-
-    // reset()
   }
 
   function handleInterruptCycle() {
     setCycles((state) =>
       state.map((cycle) => {
-        if (activeCycle && cycle.id === activeCycle.id) {
+        if (cycle.id === activeCycle!.id) {
           return { ...cycle, interruptedDate: new Date() }
         }
         return cycle
@@ -61,11 +59,11 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
   function markCycleAsFinished() {
     setCycles((state) =>
       state.map((cycle) => {
-        if (activeCycle && cycle.id === activeCycle.id) {
+        if (cycle.id === activeCycle!.id) {
           return { ...cycle, finishedDate: new Date() }
         }
         return cycle
-      })
+      }),
     )
   }
 

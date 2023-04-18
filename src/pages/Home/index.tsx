@@ -14,15 +14,14 @@ import {
 } from '../../utils/cycleFormValidation'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useCycles } from '../../hooks/useCycles'
 
 export function Home() {
-  const { activeCycle, handleCreateNewCycle, handleInterruptCycle } =
-    useCycles()
+  const { activeCycle, handleCreateNewCycle, handleInterruptCycle } = useCycles()
 
   // form configs
-  const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
+  const newCycleFormManager = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
     defaultValues: {
       task: '',
@@ -30,13 +29,19 @@ export function Home() {
     },
   })
 
+  const { handleSubmit, watch } = newCycleFormManager
+
   const task = watch('task')
   const isSubmitDisabled = !task
 
+  const onSubmit = (data: NewCycleFormData) => handleCreateNewCycle(data)
+
   return (
     <HomeContainer>
-      <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
-        <NewCycleForm />
+      <form onSubmit={handleSubmit(onSubmit)} action="">
+        <FormProvider {...newCycleFormManager}>
+          <NewCycleForm />
+        </FormProvider>
         <Countdown />
 
         {activeCycle ? (

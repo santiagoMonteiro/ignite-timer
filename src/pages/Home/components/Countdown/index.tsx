@@ -47,7 +47,7 @@ export function Countdown() {
       clearInterval(interval)
       setAmountSecondsPassed(0)
     }
-  }, [activeCycle, totalSeconds])
+  }, [activeCycle, totalSeconds, markCycleAsFinished])
 
   useEffect(() => {
     function updatePageTitleWithCycleTime() {
