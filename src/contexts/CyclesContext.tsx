@@ -42,6 +42,11 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
     setActiveCycle(newCycle)
   }
 
+  function resetActiveCycle() {
+    setActiveCycle(null)
+    document.title = 'Ignite Timer'
+  }
+
   function handleInterruptCycle() {
     setCycles((state) =>
       state.map((cycle) => {
@@ -52,8 +57,7 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
       }),
     )
 
-    setActiveCycle(null)
-    document.title = 'Ignite Timer'
+    resetActiveCycle()
   }
 
   function markCycleAsFinished() {
@@ -65,6 +69,7 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
         return cycle
       }),
     )
+    resetActiveCycle()
   }
 
   return (
