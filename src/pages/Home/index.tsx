@@ -18,8 +18,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useCycles } from '../../hooks/useCycles'
 
 export function Home() {
-  const { activeCycle, handleCreateNewCycle, handleInterruptCycle } =
-    useCycles()
+  const { activeCycle, createNewCycle, interruptCycle } = useCycles()
 
   // form configs
   const newCycleFormManager = useForm<NewCycleFormData>({
@@ -35,21 +34,21 @@ export function Home() {
   const task = watch('task')
   const isSubmitDisabled = !task
 
-  function onSubmit(data: NewCycleFormData) {
-    handleCreateNewCycle(data)
+  function handleCreateNewCycle(data: NewCycleFormData) {
+    createNewCycle(data)
     reset()
   }
 
   return (
     <HomeContainer>
-      <form onSubmit={handleSubmit(onSubmit)} action="">
+      <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
         <FormProvider {...newCycleFormManager}>
           <NewCycleForm />
         </FormProvider>
         <Countdown />
 
         {activeCycle ? (
-          <StopCountdownButton onClick={handleInterruptCycle} type="button">
+          <StopCountdownButton onClick={interruptCycle} type="button">
             <HandPalm size={24} />
             Interromper
           </StopCountdownButton>

@@ -1,5 +1,9 @@
 import { createContext, ReactNode, useState } from 'react'
-import { NewCycleFormData } from '../utils/cycleFormValidation'
+
+interface CreateCycleData {
+  task: string
+  minutesAmount: number
+}
 
 interface Cycle {
   id: string
@@ -13,8 +17,8 @@ interface Cycle {
 interface CyclesContextData {
   activeCycle: Cycle | null
   cycles: Cycle[]
-  handleCreateNewCycle: (data: NewCycleFormData) => void
-  handleInterruptCycle: () => void
+  createNewCycle: (data: CreateCycleData) => void
+  interruptCycle: () => void
   markCycleAsFinished: () => void
 }
 
@@ -28,7 +32,7 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
   const [cycles, setCycles] = useState<Cycle[]>([])
   const [activeCycle, setActiveCycle] = useState<Cycle | null>(null)
 
-  function handleCreateNewCycle(data: NewCycleFormData) {
+  function createNewCycle(data: CreateCycleData) {
     const id = String(new Date().getTime())
 
     const newCycle: Cycle = {
@@ -47,7 +51,7 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
     document.title = 'Ignite Timer'
   }
 
-  function handleInterruptCycle() {
+  function interruptCycle() {
     setCycles((state) =>
       state.map((cycle) => {
         if (cycle.id === activeCycle!.id) {
@@ -77,8 +81,8 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
       value={{
         activeCycle,
         cycles,
-        handleCreateNewCycle,
-        handleInterruptCycle,
+        createNewCycle,
+        interruptCycle,
         markCycleAsFinished,
       }}
     >
