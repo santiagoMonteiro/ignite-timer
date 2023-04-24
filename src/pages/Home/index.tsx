@@ -18,7 +18,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useCycles } from '../../hooks/useCycles'
 
 export function Home() {
-  const { activeCycle, createNewCycle, interruptCycle } = useCycles()
+  const { activeCycle, createNewCycle, interruptActiveCycle } = useCycles()
 
   // form configs
   const newCycleFormManager = useForm<NewCycleFormData>({
@@ -48,7 +48,7 @@ export function Home() {
         <Countdown />
 
         {activeCycle ? (
-          <StopCountdownButton onClick={interruptCycle} type="button">
+          <StopCountdownButton onClick={interruptActiveCycle} type="button">
             <HandPalm size={24} />
             Interromper
           </StopCountdownButton>

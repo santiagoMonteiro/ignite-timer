@@ -1,25 +1,22 @@
-import { createContext, ReactNode, useState } from 'react'
+import { createContext, ReactNode, useReducer } from 'react'
+import { Cycle, cyclesReducer } from '../reducers/cycles/reducer'
+import {
+  createNewCycleAction,
+  interruptActiveCycleAction,
+  markActiveCycleAsFinishedAction,
+} from '../reducers/cycles/actions'
 
 interface CreateCycleData {
   task: string
   minutesAmount: number
 }
 
-interface Cycle {
-  id: string
-  task: string
-  minutesAmount: number
-  startDate: Date
-  interruptedDate?: Date
-  finishedDate?: Date
-}
-
 interface CyclesContextData {
   activeCycle: Cycle | null
   cycles: Cycle[]
   createNewCycle: (data: CreateCycleData) => void
-  interruptCycle: () => void
-  markCycleAsFinished: () => void
+  interruptActiveCycle: () => void
+  markActiveCycleAsFinished: () => void
 }
 
 interface CyclesProviderProps {
@@ -29,8 +26,12 @@ interface CyclesProviderProps {
 export const CyclesContext = createContext({} as CyclesContextData)
 
 export function CyclesProvider({ children }: CyclesProviderProps) {
-  const [cycles, setCycles] = useState<Cycle[]>([])
-  const [activeCycle, setActiveCycle] = useState<Cycle | null>(null)
+  const [cyclesState, dispatch] = useReducer(cyclesReducer, {
+    cycles: [],
+    activeCycle: null,
+  })
+
+  const { cycles, activeCycle } = cyclesState
 
   function createNewCycle(data: CreateCycleData) {
     const id = String(new Date().getTime())
@@ -42,38 +43,23 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
       startDate: new Date(),
     }
 
-    setCycles((state) => [...state, newCycle])
-    setActiveCycle(newCycle)
+    dispatch(createNewCycleAction(newCycle))
   }
 
-  function resetActiveCycle() {
-    setActiveCycle(null)
+  function resetDocumentTitle() {
     document.title = 'Ignite Timer'
   }
 
-  function interruptCycle() {
-    setCycles((state) =>
-      state.map((cycle) => {
-        if (cycle.id === activeCycle!.id) {
-          return { ...cycle, interruptedDate: new Date() }
-        }
-        return cycle
-      }),
-    )
+  function interruptActiveCycle() {
+    dispatch(interruptActiveCycleAction())
 
-    resetActiveCycle()
+    resetDocumentTitle()
   }
 
-  function markCycleAsFinished() {
-    setCycles((state) =>
-      state.map((cycle) => {
-        if (cycle.id === activeCycle!.id) {
-          return { ...cycle, finishedDate: new Date() }
-        }
-        return cycle
-      }),
-    )
-    resetActiveCycle()
+  function markActiveCycleAsFinished() {
+    dispatch(markActiveCycleAsFinishedAction())
+
+    resetDocumentTitle()
   }
 
   return (
@@ -82,8 +68,8 @@ export function CyclesProvider({ children }: CyclesProviderProps) {
         activeCycle,
         cycles,
         createNewCycle,
-        interruptCycle,
-        markCycleAsFinished,
+        interruptActiveCycle,
+        markActiveCycleAsFinished,
       }}
     >
       {children}

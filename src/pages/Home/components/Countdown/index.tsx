@@ -4,7 +4,7 @@ import { differenceInSeconds } from 'date-fns'
 import { useCycles } from '../../../../hooks/useCycles'
 
 export function Countdown() {
-  const { activeCycle, markCycleAsFinished } = useCycles()
+  const { activeCycle, markActiveCycleAsFinished } = useCycles()
 
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
 
@@ -27,7 +27,7 @@ export function Countdown() {
         )
 
         if (secondsDifference >= totalSeconds) {
-          markCycleAsFinished()
+          markActiveCycleAsFinished()
           setAmountSecondsPassed(totalSeconds)
           return
         }
@@ -47,7 +47,7 @@ export function Countdown() {
       clearInterval(interval)
       setAmountSecondsPassed(0)
     }
-  }, [activeCycle, totalSeconds, markCycleAsFinished])
+  }, [activeCycle, totalSeconds, markActiveCycleAsFinished])
 
   useEffect(() => {
     function updatePageTitleWithCycleTime() {
