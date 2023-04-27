@@ -23,7 +23,7 @@ export function Countdown() {
       return setInterval(() => {
         const secondsDifference = differenceInSeconds(
           new Date(),
-          activeCycle!.startDate,
+          new Date(activeCycle!.startDate),
         )
 
         if (secondsDifference >= totalSeconds) {
@@ -39,6 +39,9 @@ export function Countdown() {
     let interval: number
 
     if (activeCycle) {
+      setAmountSecondsPassed(
+        differenceInSeconds(new Date(), new Date(activeCycle!.startDate)),
+      )
       interval = createIntervalForPassingCycleTime()
     }
 

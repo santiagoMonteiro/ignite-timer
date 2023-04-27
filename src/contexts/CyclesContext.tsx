@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useReducer } from 'react'
+import { createContext, ReactNode, useEffect, useReducer } from 'react'
 import { Cycle, cyclesReducer } from '../reducers/cycles/reducer'
 import {
   createNewCycleAction,
@@ -25,13 +25,37 @@ interface CyclesProviderProps {
 
 export const CyclesContext = createContext({} as CyclesContextData)
 
+const cyclesInitialState = {
+  cycles: [],
+  activeCycle: null,
+}
+
 export function CyclesProvider({ children }: CyclesProviderProps) {
-  const [cyclesState, dispatch] = useReducer(cyclesReducer, {
-    cycles: [],
-    activeCycle: null,
-  })
+  const [cyclesState, dispatch] = useReducer(
+    cyclesReducer,
+    cyclesInitialState,
+    recoverStoredCyclesData,
+  )
+
+  useEffect(() => {
+    const stateJSON = JSON.stringify(cyclesState)
+
+    localStorage.setItem('@ignite-timer:cycles-state-1.0.0', stateJSON)
+  }, [cyclesState])
 
   const { cycles, activeCycle } = cyclesState
+
+  function recoverStoredCyclesData() {
+    const storedStateAsJSON = localStorage.getItem(
+      '@ignite-timer:cycles-state-1.0.0',
+    )
+
+    if (storedStateAsJSON) {
+      return JSON.parse(storedStateAsJSON)
+    }
+
+    return cyclesInitialState
+  }
 
   function createNewCycle(data: CreateCycleData) {
     const id = String(new Date().getTime())
